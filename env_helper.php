@@ -1,9 +1,6 @@
 <?php
-
-// Create this file.
-// file: application/helpers/general_helper.php
-
-if (!function_exists('value')) {
+class Env
+{
     /**
      * Return the default value of the given value.
      *
@@ -11,13 +8,11 @@ if (!function_exists('value')) {
      *
      * @return mixed
      */
-    function value($value)
+     public static function value($value)
     {
         return $value instanceof Closure ? $value() : $value;
     }
-}
 
-if (!function_exists('env')) {
     /**
      * Gets the value of an environment variable.
      *
@@ -26,15 +21,16 @@ if (!function_exists('env')) {
      *
      * @return mixed
      */
-    function env($key, $default = null)
+    public static function get($key, $default = null)
     {
         $value = getenv($key);
-
-        if ($value === false) {
-            return value($default);
+        if ($value === false) 
+        {
+            return Env::value($default);
         }
 
-        switch (strtolower($value)) {
+        switch (strtolower($value)) 
+        {
             case 'true':
             case '(true)':
                 return true;
@@ -49,10 +45,10 @@ if (!function_exists('env')) {
                 return;
         }
 
-        if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
+        if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') 
+        {
             return substr($value, 1, -1);
         }
-
         return $value;
     }
 }
