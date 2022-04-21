@@ -14,8 +14,47 @@ This is an update folk from https://github.com/technoknol/env-in-CodeIgniter.
 > This will add `env` helper method to get any variable stored in `.env` file.
 
 ##### 4. Copy `MY_Loader.php` to your `application/core` directory.
-> This will override Core CI Loader allowing the dotenv file to be loaded as the first lib. solving issue raised here https://github.com/technoknol/env-in-CodeIgniter/issues/8
+> This will override Core CI Loader allowing the dotenv file to be loaded as the first lib. 
+> Seeing the exact same thing on CI3. It looks like the database helper will be loaded before the .env files are processed which causes any env() calls in the database.php to fail. solving issue raised here https://github.com/technoknol/env-in-CodeIgniter/issues/8
 
+```
+		// Load libraries
+		// In system\core\Loader.php, they prioritize loading of the database before any other libraries:
+		if (isset($autoload['libraries']) && count($autoload['libraries']) > 0)
+		{
+			// Load the database driver.
+			if (in_array('database', $autoload['libraries']))
+			{
+				$this->database();
+				$autoload['libraries'] = array_diff($autoload['libraries'], array('database'));
+			}
+
+			// Load all other libraries
+			$this->library($autoload['libraries']);
+		}
+
+    // If you don't mind touching the Code Igniter code, you can workaround this issue by forcing env to be loaded before database like:
+		// Load libraries
+		if (isset($autoload['libraries']) && count($autoload['libraries']) > 0)
+		{
+			// Load the environment driver before the database code
+			if (in_array('env', $autoload['libraries']))
+			{
+				$this->library('env');
+				$autoload['libraries'] = array_diff($autoload['libraries'], array('env'));
+
+			// Load the database driver.
+			if (in_array('database', $autoload['libraries']))
+			{
+				$this->database();
+				$autoload['libraries'] = array_diff($autoload['libraries'], array('database'));
+			}
+
+			// Load all other libraries
+			$this->library($autoload['libraries']);
+		}
+    
+```
 ##### 5. Autoload library 
 > Add library to `$autoload['libraries']` like this 
 ```
