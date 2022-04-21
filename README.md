@@ -33,7 +33,7 @@ This is an update folk from https://github.com/technoknol/env-in-CodeIgniter.
 			$this->library($autoload['libraries']);
 		}
 
-    // If you don't mind touching the Code Igniter code, you can workaround this issue by forcing env to be loaded before database like:
+		// If you don't mind touching the Code Igniter code, you can workaround this issue by forcing env to be loaded before database like:
 		// Load libraries
 		if (isset($autoload['libraries']) && count($autoload['libraries']) > 0)
 		{
